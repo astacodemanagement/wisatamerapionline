@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="{{ asset('template/back/dist/libs/select2/dist/css/select2.min.css') }}" rel="stylesheet">
+    <!-- Favicon icon-->
+    <link rel="shortcut icon" type="image/png"
+        href="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}" />
+
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, #00923f, #00b894);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .linear-gradient {
+            background: linear-gradient(45deg, #00923f, #00b894);
+        }
+
+        .nav-tabs .nav-link {
+            color: #495057;
+            font-weight: 500;
+            border: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(to right, #00923f, #00b894) !important;
+            color: white !important;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            min-height: 38px;
+        }
+
+        .form-check-input.check-outline {
+            border: 2px solid #00923f;
+        }
+
+        .form-check-input.check-outline:checked {
+            background-color: #00923f;
+            border-color: #00923f;
+        }
+
+        .btn-primary {
+            background: #00923f;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #007a33;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            border: none;
+            color: #212529;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-primary.rounded-pill,
+        .btn-outline-warning.rounded-pill {
+            margin-right: 10px;
+        }
+
+        .section-title {
+            color: #00923f;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-alert {
+            border-radius: 8px;
+        }
+
+        @media (max-width: 576px) {
+
+            .hero-card,
+            .form-card {
+                padding: 1.5rem;
+            }
+
+            .nav-tabs .nav-link {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <!-- Hero Card -->
+        <div class="hero-card text-center">
+            <a href="/home" class="text-nowrap logo-img">
+                <img src="{{ asset('/upload/profil/' . $profil->logo) }}" class="dark-logo" alt="Logo-Dark"
+                    style="width: 100%; max-width: 100px; height: auto; object-fit: contain;" />
+            </a>
+            <h1 class="display-5 fw-bold mb-3"><i class="fa fa-user-plus me-2"></i>Pendaftaran Pengguna Baru</h1>
+            <p class="lead mb-0">Lengkapi data diri dan informasi keanggotaan untuk bergabung dengan sistem AKP2I</p>
+        </div>
+        @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa fa-times-circle me-1"></i> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Terjadi kesalahan:</strong>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <form method="POST" action="{{ route('registration.store') }}" enctype="multipart/form-data">
+                @csrf
+                <ul class="nav nav-tabs" id="userTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="data-diri-tab" data-bs-toggle="tab"
+                            data-bs-target="#data-diri" type="button" role="tab" aria-controls="data-diri"
+                            aria-selected="true">
+                            <i class="fa fa-user me-1"></i> Data Diri
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="data-anggota-tab" data-bs-toggle="tab"
+                            data-bs-target="#data-anggota" type="button" role="tab" aria-controls="data-anggota"
+                            aria-selected="false">
+                            <i class="fa fa-users me-1"></i> Data Anggota
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content mt-4" id="userTabsContent">
+                    <div class="tab-pane fade show active" id="data-diri" role="tabpanel"
+                        aria-labelledby="data-diri-tab">
+                        <div class="row">
+                            <!-- Gambar Diri -->
+                            <div class="col-md-12 mb-4">
+                                <div class="mt-3">
+                                    <label for="image" class="form-label"><strong>Foto Profil:</strong></label>
+                                    <input type="file" name="image" class="form-control" id="image" accept="image/*"
+                                        onchange="previewImage()">
+                                    <div id="image_error" class="invalid-feedback" style="display: none;"></div>
+                                    <canvas id="preview_canvas"
+                                        style="display: none; max-width: 100%; margin-top: 10px;"></canvas>
+                                    <img id="preview_image" src="#" alt="Preview Logo"
+                                        style="display: none; max-width: 100%; margin-top: 10px;">
+                                </div>
+                            </div>
+
+                            <script>
+                                function previewImage() {
+                                    const previewCanvas = document.getElementById('preview_canvas');
+                                    const previewImage = document.getElementById('preview_image');
+                                    const fileInput = document.getElementById('image');
+                                    const errorDiv = document.getElementById('image_error');
+                                    const file = fileInput.files[0];
+                                    const maxSize = 4 * 1024 * 1024; // 4 MB dalam bytes
+
+                                    // Reset error dan pratinjau
+                                    errorDiv.style.display = 'none';
+                                    errorDiv.textContent = '';
+                                    previewCanvas.style.display = 'none';
+                                    previewImage.style.display = 'none';
+                                    fileInput.classList.remove('is-invalid');
+
+                                    if (file) {
+                                        // Validasi ukuran file
+                                        if (file.size > maxSize) {
+                                            errorDiv.textContent = 'Ukuran file terlalu besar. Maksimum 4 MB.';
+                                            errorDiv.style.display = 'block';
+                                            fileInput.classList.add('is-invalid');
+                                            fileInput.value = ''; // Reset input file
+                                            return;
+                                        }
+
+                                        const reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            const img = new Image();
+                                            img.src = e.target.result;
+
+                                            img.onload = function () {
+                                                const canvasContext = previewCanvas.getContext('2d');
+                                                const maxWidth = 100;
+                                                const scaleFactor = maxWidth / img.width;
+                                                const newHeight = img.height * scaleFactor;
+
+                                                previewCanvas.width = maxWidth;
+                                                previewCanvas.height = newHeight;
+                                                canvasContext.drawImage(img, 0, 0, maxWidth, newHeight);
+
+                                                previewCanvas.style.display = 'block';
+                                                previewImage.style.display = 'none';
+                                            };
+                                        };
+
+                                        reader.readAsDataURL(file);
+                                    } else {
+                                        previewImage.src = '';
+                                        previewCanvas.style.display = 'none';
+                                    }
+                                }
+                            </script>
+                            <h4 class="section-title"><i class="fa fa-user-circle me-2"></i>Data Diri</h4>
+                            <!-- Data Diri -->
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label"><strong>Nama:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Nama"
+                                    value="{{ old('name') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="user" class="form-label"><strong>User:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="user" id="user" class="form-control" placeholder="User"
+                                    value="{{ old('user') }}" pattern="[a-z_.@]+"
+                                    title="Hanya huruf kecil, underscore (_), titik (.), dan tanda at (@) yang diperbolehkan, tanpa spasi atau karakter khusus lainnya."
+                                    oninput="this.value = this.value.toLowerCase().replace(/\s/g, '')" required>
+                            </div>
+                            <script>
+                                document.getElementById('user').addEventListener('input', function (e) {
+                                    // Ubah ke huruf kecil dan hapus spasi
+                                    e.target.value = e.target.value.toLowerCase().replace(/\s/g, '');
+
+                                    // Validasi input (hanya huruf kecil, underscore, titik, dan tanda at)
+                                    if (!/^[a-z_.@]+$/.test(e.target.value) && e.target.value !== '') {
+                                        e.target.setCustomValidity(
+                                            'Hanya huruf kecil, underscore (_), titik (.), dan tanda at (@) yang diperbolehkan, tanpa spasi atau karakter khusus lainnya.'
+                                        );
+                                    } else {
+                                        e.target.setCustomValidity('');
+                                    }
+                                }); <
+                                /script
+
+
+                                    <
+                                    div class = "col-md-6 mb-3" >
+                                        <
+                                label
+                                            for="email"
+                                            class="form-label" > < strong > Email: < /strong> <span
+                                                class="text-danger" > * < /span></label >
+                                                <
+                                input type="email"
+                                                    name="email"
+                                                    id="email"
+                                                    class="form-control"
+                                                    placeholder="Email"
+                                                    value="{{ old('email') }}"
+                                                    required >
+                                                    <
+                                    /div> <
+                                div class="col-md-6 mb-3" >
+                                                        <
+                                label
+                                                            for="phone_number"
+                                                            class="form-label" > < strong > Nomor Telepon: < /strong> <span
+                                                                class="text-danger" > * < /span></label >
+                                                                <
+                                input type="text"
+                                                                    name="phone_number"
+                                                                    id="phone_number"
+                                                                    class="form-control"
+                                                                    placeholder="Nomor Telepon (contoh: +6281234567890)"
+                                                                    value="{{ old('phone_number') }}"
+                                                                    pattern="\+?[0-9]+"
+                                                                    title="Hanya angka yang diperbolehkan, diawali dengan + untuk kode negara (opsional)."
+                                                                    oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
+                                                                    required >
+                                                                    <
+                                    /div>
+
+                                                                    <
+                                    script >
+                                                                        document.getElementById('phone_number').addEventListener('input', function(e) {
+                                                                            // Hapus semua karakter kecuali angka dan tanda +
+                                                                            e.target.value = e.target.value.replace(/[^0-9+]/g, '');
+
+                                                                        // Validasi: hanya angka, boleh diawali dengan + sekali di awal
+                                                                        if (!/^\+?[0-9]+$/.test(e.target.value) && e.target.value !== '') {
+                                                                            e.target.setCustomValidity(
+                                                                                'Hanya angka yang diperbolehkan, diawali dengan + untuk kode negara (opsional).');
+                                        } else {
+                                                                            e.target.setCustomValidity('');
+                                        }
+                                    });
+                            </script>
+                            <!-- Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label"><strong>Password:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" name="password" id="password"
+                                        class="form-control @error('password') is-invalid @enderror"
+                                        placeholder="Password" required autocomplete="new-password">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                    </button>
+                                    @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="password_confirmation" class="form-label"><strong>Konfirmasi
+                                        Password:</strong> <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" name="password_confirmation" id="password_confirmation"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        placeholder="Konfirmasi Password" required autocomplete="new-password">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="togglePasswordConfirmation">
+                                        <i class="fas fa-eye" id="togglePasswordConfirmationIcon"></i>
+                                    </button>
+                                    @error('password_confirmation')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <script>
+                                                                    // Toggle untuk field Password
+                                                                    document.getElementById('togglePassword').addEventListener('click', function() {
+                                    const passwordInput = document.getElementById('password');
+                                                                    const toggleIcon = document.getElementById('togglePasswordIcon');
+
+                                                                    if (passwordInput.type === 'password') {
+                                                                        passwordInput.type = 'text';
+                                                                    toggleIcon.classList.remove('fa-eye');
+                                                                    toggleIcon.classList.add('fa-eye-slash');
+                                    } else {
+                                                                        passwordInput.type = 'password';
+                                                                    toggleIcon.classList.remove('fa-eye-slash');
+                                                                    toggleIcon.classList.add('fa-eye');
+                                    }
+                                });
+
+                                                                    // Toggle untuk field Konfirmasi Password
+                                                                    document.getElementById('togglePasswordConfirmation').addEventListener('click', function() {
+                                    const passwordConfirmationInput = document.getElementById('password_confirmation');
+                                                                    const toggleIcon = document.getElementById('togglePasswordConfirmationIcon');
+
+                                                                    if (passwordConfirmationInput.type === 'password') {
+                                                                        passwordConfirmationInput.type = 'text';
+                                                                    toggleIcon.classList.remove('fa-eye');
+                                                                    toggleIcon.classList.add('fa-eye-slash');
+                                    } else {
+                                                                        passwordConfirmationInput.type = 'password';
+                                                                    toggleIcon.classList.remove('fa-eye-slash');
+                                                                    toggleIcon.classList.add('fa-eye');
+                                    }
+                                });
+                            </script>
+                            <!-- Tempat dan Tanggal Lahir -->
+                            <div class="col-md-6 mb-3">
+                                <label for="birth_place" class="form-label"><strong>Tempat Lahir:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="birth_place" id="birth_place" class="form-control"
+                                    placeholder="Tempat Lahir" value="{{ old('birth_place') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="birth_date" class="form-label"><strong>Tanggal Lahir:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="date" name="birth_date" id="birth_date" class="form-control"
+                                    value="{{ old('birth_date') }}" required>
+                            </div>
+                            <!-- Alamat Sesuai KTP -->
+                            <h4 class="section-title"><i class="fa fa-address-card me-2"></i>Alamat Sesuai KTP</h4>
+                            <div class="col-md-12 mb-3">
+                                <label for="address_by_card" class="form-label"><strong>Alamat Jalan:</strong></label>
+                                <textarea name="address_by_card" id="address_by_card" class="form-control"
+                                    placeholder="Alamat lengkap">{{ old('address_by_card') }}</textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="rt_rw" class="form-label"><strong>RT/RW:</strong></label>
+                                <input type="text" name="rt_rw" id="rt_rw" class="form-control" placeholder="RT/RW"
+                                    value="{{ old('rt_rw') }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="province" class="form-label"><strong>Provinsi:</strong></label>
+                                <select id="province" name="province" class="form-control"></select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label"><strong>Kota/Kabupaten:</strong></label>
+                                <select id="city" name="city" class="form-control"></select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="district" class="form-label"><strong>Kecamatan:</strong></label>
+                                <select id="district" name="district" class="form-control"></select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="subdistrict" class="form-label"><strong>Desa/Kelurahan:</strong></label>
+                                <select id="subdistrict" name="subdistrict" class="form-control"></select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="postal_code" class="form-label"><strong>Kode POS:</strong></label>
+                                <input type="text" name="postal_code" id="postal_code" class="form-control"
+                                    placeholder="Kode POS" value="{{ old('postal_code') }}">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input success check-outline outline-success"
+                                        type="checkbox" id="use_address" name="use_address" value="1">
+                                    <label class="form-check-label" for="use_address">Gunakan Alamat Domisili (jika
+                                        berbeda)</label>
+                                </div>
+                            </div>
+                            <!-- Informasi Pekerjaan -->
+                            <h4 class="section-title"><i class="fa fa-briefcase me-2"></i>Informasi Pekerjaan</h4>
+                            <div class="col-md-12 mb-3">
+                                <label for="occupation_type" class="form-label"><strong>Status
+                                        Pekerjaan:</strong></label>
+                                <select name="occupation_type" id="occupation_type" class="form-select">
+                                    <option value="active" {{ old('occupation_type', 'active' )=='active' ? 'selected'
+                                        : '' }}>Aktif
+                                    </option>
+                                    <option value="nonactive" {{ old('occupation_type', 'active' )=='nonactive'
+                                        ? 'selected' : '' }}>
+                                        Nonaktif</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="company_name" class="form-label"><strong>Nama
+                                        Perusahaan/Instansi:</strong></label>
+                                <input type="text" name="company_name" id="company_name" class="form-control"
+                                    placeholder="Nama Perusahaan/Instansi" value="{{ old('company_name') }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="position" class="form-label"><strong>Jabatan:</strong></label>
+                                <input type="text" name="position" id="position" class="form-control"
+                                    placeholder="Jabatan" value="{{ old('position') }}">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="company_address" class="form-label"><strong>Alamat
+                                        Perusahaan/Instansi:</strong></label>
+                                <textarea name="company_address" id="company_address" class="form-control"
+                                    placeholder="Alamat Perusahaan">{{ old('company_address') }}</textarea>
+                            </div>
+
+                            <!-- Alamat Korespondensi -->
+                            <h4 class="section-title"><i class="fa fa-location-arrow me-2"></i>Alamat Korespondensi
+                                <button class="btn btn-outline-secondary ms-2" type="button" id="copyAddressButton"
+                                    title="Salin dari Alamat Perusahaan">
+                                    <i class="fas fa-copy"></i> Salin
+                                </button>
+                            </h4>
+                            <div class="col-md-12 mb-3">
+                                <div class="input-group">
+                                    <label for="correspondence_address" class="form-label"><strong>Pilih Alamat untuk
+                                            Surat Menyurat:</strong></label>
+
+                                </div>
+                                <textarea name="correspondence_address" id="correspondence_address" class="form-control"
+                                    placeholder="Alamat Korespondensi">{{ old('correspondence_address') }}</textarea>
+                            </div>
+
+                            <script>
+                                                                    document.getElementById('copyAddressButton').addEventListener('click', function() {
+                                    const companyAddress = document.getElementById('company_address').value;
+                                                                    const correspondenceAddress = document.getElementById('correspondence_address');
+
+                                                                    correspondenceAddress.value = companyAddress;
+                                });
+                            </script>
+                            <!-- Pendidikan -->
+                            <h4 class="section-title"><i class="fa fa-graduation-cap me-2"></i>Pendidikan</h4>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_education" class="form-label"><strong>Tingkat Pendidikan
+                                        Terakhir:</strong> <span class="text-danger">*</span></label>
+                                <select name="last_education" id="last_education" class="form-control" required>
+                                    <option value="">Pilih Tingkat Pendidikan</option>
+                                    <option value="sd" {{ old('last_education')=='sd' ? 'selected' : '' }}>SD
+                                    </option>
+                                    <option value="smp" {{ old('last_education')=='smp' ? 'selected' : '' }}>SMP
+                                    </option>
+                                    <option value="sma" {{ old('last_education')=='sma' ? 'selected' : '' }}>
+                                        SMA/SMK</option>
+                                    <option value="diploma" {{ old('last_education')=='diploma' ? 'selected' : '' }}>
+                                        Diploma</option>
+                                    <option value="sarjana" {{ old('last_education')=='sarjana' ? 'selected' : '' }}>
+                                        Sarjana</option>
+                                    <option value="magister" {{ old('last_education')=='magister' ? 'selected' : '' }}>
+                                        Magister</option>
+                                    <option value="doktor" {{ old('last_education')=='doktor' ? 'selected' : '' }}>
+                                        Doktor</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="study_program" class="form-label"><strong>Jurusan:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="study_program" id="study_program" class="form-control"
+                                    placeholder="Jurusan" value="{{ old('study_program') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="university_name" class="form-label"><strong>Nama
+                                        Sekolah/Universitas:</strong> <span class="text-danger">*</span></label>
+                                <input type="text" name="university_name" id="university_name" class="form-control"
+                                    placeholder="Nama Institusi" value="{{ old('university_name') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="graduation_year" class="form-label"><strong>Tahun Lulus:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" name="graduation_year" id="graduation_year" class="form-control"
+                                    placeholder="Contoh: 2020" value="{{ old('graduation_year') }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="data-anggota" role="tabpanel" aria-labelledby="data-anggota-tab">
+                        <div class="row">
+                            <h4 class="section-title"><i class="fa fa-book me-2"></i>Informasi Dasar Keanggotaan</h4>
+                            <div class="col-md-12 mb-3">
+                                <label for="member_type" class="form-label"><strong>Jenis Keanggotaan:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <select name="member_type" id="member_type" class="form-control" required>
+                                    <option value="">-- Pilih Jenis Keanggotaan --</option>
+                                    <option value="Utama" {{ old('member_type')=='Utama' ? 'selected' : '' }}>Utama
+                                        (wajib memiliki Izin Praktik)</option>
+                                    <option value="Madya" {{ old('member_type')=='Madya' ? 'selected' : '' }}>Madya
+                                        (tidak memiliki Izin Praktik/umum)</option>
+                                    <option value="Pratama" {{ old('member_type')=='Pratama' ? 'selected' : '' }}>
+                                        Pratama (khusus mahasiswa)</option>
+                                    <option value="Kehormatan" {{ old('member_type')=='Kehormatan' ? 'selected' : '' }}>
+                                        Kehormatan (bisa
+                                        memiliki Izin Praktik)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="branch_id" class="form-label"><strong>Terdaftar pada
+                                        Cabang:</strong></label>
+                                <select name="branch_id" id="branch_id" class="form-select">
+                                    <option value="">Pilih Cabang</option>
+                                    @foreach ($branches as $branch)
+                                    <option value="{{ $branch->id }}" {{ old('branch_id')==$branch->id ? 'selected' : ''
+                                        }}>
+                                        {{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- Legal Authorization & Retired Tax Officer -->
+                            <div class="col-md-12 mb-3" id="legal-authorization-section" style="display: none;">
+                                <!-- Legal Authorization -->
+                                <div class="col-md-12 mb-3">
+                                    <label for="legal_authorization_permission" class="form-label"><strong>Memiliki
+                                            Izin Kuasa Hukum dari Pengadilan Pajak?</strong></label>
+                                    <div class="mt-2">
+                                        <input type="radio" class="btn-check" name="legal_authorization_permission"
+                                            id="legal_authorization_yes" value="1" onchange="toggleFileUpload()" {{
+                                            old('legal_authorization_permission')=='1' ? 'checked' : '' }}>
+                                        <label class="btn btn-outline-primary rounded-pill font-medium"
+                                            for="legal_authorization_yes">Ya</label>
+                                        <input type="radio" class="btn-check" name="legal_authorization_permission"
+                                            id="legal_authorization_no" value="0" onchange="toggleFileUpload()" {{
+                                            old('legal_authorization_permission')=='0' ? 'checked' : '' }}>
+                                        <label class="btn btn-outline-warning rounded-pill font-medium"
+                                            for="legal_authorization_no">Tidak</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3" id="file-upload-container"
+                                    style="display: {{ old('legal_authorization_permission') == '1' ? 'block' : 'none' }};">
+                                    <label for="legal_authorization_file" class="form-label"><strong>Unggah Kartu Izin
+                                            Kuasa Hukum:</strong> <span class="text-danger">*</span></label>
+                                    <input type="file" name="legal_authorization_file" id="legal_authorization_file"
+                                        class="form-control">
+                                </div>
+                                <!-- Retired Tax Officer -->
+                                <div class="col-md-12 mb-3">
+                                    <label for="retired_tax_officer" class="form-label"><strong>Pernah Mengabdikan
+                                            diri sebagai atau seorang pensiunan pegawai Direktorat Jenderal
+                                            Pajak?</strong></label>
+                                    <div class="mt-2">
+                                        <input type="radio" class="btn-check" name="retired_tax_officer"
+                                            id="retired_tax_officer_yes" value="1" onchange="toggleRetiredFields()" {{
+                                            old('retired_tax_officer')=='1' ? 'checked' : '' }}>
+                                        <label class="btn btn-outline-primary rounded-pill font-medium"
+                                            for="retired_tax_officer_yes">Ya</label>
+                                        <input type="radio" class="btn-check" name="retired_tax_officer"
+                                            id="retired_tax_officer_no" value="0" onchange="toggleRetiredFields()" {{
+                                            old('retired_tax_officer')=='0' ? 'checked' : '' }}>
+                                        <label class="btn btn-outline-warning rounded-pill font-medium"
+                                            for="retired_tax_officer_no">Tidak</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3" id="retired-fields-container"
+                                    style="display: {{ old('retired_tax_officer') == '1' ? 'block' : 'none' }};">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="position_tax" class="form-label"><strong>Pangkat
+                                                    Golongan:</strong> <span class="text-danger">*</span></label>
+                                            <input type="text" name="position_tax" id="position_tax"
+                                                class="form-control" placeholder="Pangkat Golongan"
+                                                value="{{ old('position_tax') }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="retirement_year" class="form-label"><strong>Tahun
+                                                    Pensiun:</strong> <span class="text-danger">*</span></label>
+                                            <input type="number" name="retirement_year" id="retirement_year"
+                                                class="form-control" placeholder="Tahun Pensiun"
+                                                value="{{ old('retired_tax_officer') }}">
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label for="retirement_decision_letter" class="form-label"><strong>Unggah
+                                                    Surat Keputusan Pensiun:</strong> <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="file" name="retirement_decision_letter"
+                                                id="retirement_decision_letter" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Nomor Identitas -->
+                            <h4 class="section-title"><i class="fa fa-credit-card me-2"></i>Nomor Identitas</h4>
+                            <div class="col-md-6 mb-3">
+                                <label for="nik" class="form-label"><strong>Nomor KTP:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="nik" id="nik" class="form-control" placeholder="Nomor KTP"
+                                    value="{{ old('nik') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="npwp" class="form-label"><strong>Nomor NPWP:</strong> <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="npwp" id="npwp" class="form-control" placeholder="Nomor NPWP"
+                                    value="{{ old('npwp') }}" required>
+                            </div>
+                            <!-- Informasi Lisensi Praktik -->
+                            <div id="practice-license-section" style="display: none;">
+                                <h4 class="section-title"><i class="fa fa-universal-access me-2"></i>Informasi Lisensi
+                                    Praktik (Khusus Anggota Utama)</h4>
+                                <div class="col-md-12 mb-3">
+                                    <label for="practice_license_number" class="form-label"><strong>Nomor Izin
+                                            Praktik:</strong></label>
+                                    <input type="text" name="practice_license_number" id="practice_license_number"
+                                        class="form-control" placeholder="Nomor Izin Praktik"
+                                        value="{{ old('practice_license_number') }}">
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="certification_level" class="form-label"><strong>Tingkat
+                                            Sertifikasi:</strong></label>
+                                    <select name="certification_level" id="certification_level" class="form-control">
+                                        <option value="">-- Pilih Tingkat Sertifikasi --</option>
+                                        <option value="A" {{ old('certification_level')=='A' ? 'selected' : '' }}>A
+                                        </option>
+                                        <option value="B" {{ old('certification_level')=='B' ? 'selected' : '' }}>B
+                                        </option>
+                                        <option value="C" {{ old('certification_level')=='C' ? 'selected' : '' }}>C
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="practice_license_issue_date" class="form-label"><strong>Tanggal Terbit
+                                            Izin Praktik:</strong></label>
+                                    <input type="date" name="practice_license_issue_date"
+                                        id="practice_license_issue_date" class="form-control"
+                                        value="{{ old('practice_license_issue_date') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Syarat dan Ketentuan -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle me-1 text-primary"></i>
+                        <p class="mb-0 fw-medium">Sudah punya akun?</p>
+                        <a class="text-primary fw-medium ms-2" href="/">Login disini</a>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check me-3">
+                            <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms"
+                                required>
+                            <label class="form-check-label" for="accept_terms">
+                                Saya setuju dengan <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#termsModal">Syarat dan Ketentuan</a>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm" id="submitButton">
+                            <span id="submitSpinner" class="spinner-border spinner-border-sm d-none me-1" role="status"
+                                aria-hidden="true"></span>
+                            <i class="fa fa-clipboard-check me-1"></i>Daftar Sekarang
+                        </button>
+                    </div>
+                </div>
+                <!-- Modal Syarat dan Ketentuan -->
+                <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="termsModalLabel">Syarat dan Ketentuan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h6>1. Penerimaan Syarat</h6>
+                                <p>Dengan mendaftar dan menggunakan layanan kami, Anda setuju untuk terikat oleh syarat
+                                    dan ketentuan ini. Jika Anda tidak setuju, harap jangan melanjutkan pendaftaran.</p>
+                                <h6>2. Kelayakan</h6>
+                                <p>Pendaftar harus berusia minimal 18 tahun dan memiliki dokumen identitas yang sah (KTP
+                                    dan NPWP). Anggota Utama dan Kehormatan wajib memiliki izin praktik yang valid.</p>
+                                <h6>3. Keakuratan Informasi</h6>
+                                <p>Anda wajib memberikan informasi yang akurat dan lengkap selama proses pendaftaran.
+                                    Kami berhak menolak atau membatalkan pendaftaran jika informasi yang diberikan tidak
+                                    benar.</p>
+                                <h6>4. Pengunggahan Dokumen</h6>
+                                <p>Dokumen yang diunggah (seperti izin praktik, kartu kuasa hukum, atau surat keputusan
+                                    pensiun) harus asli dan valid. Kami tidak bertanggung jawab atas dokumen palsu.</p>
+                                <h6>5. Kebijakan Privasi</h6>
+                                <p>Data pribadi Anda akan dilindungi sesuai dengan kebijakan privasi kami. Kami tidak
+                                    akan membagikan data Anda tanpa persetujuan, kecuali diwajibkan oleh hukum.</p>
+                                <h6>6. Pembatalan Keanggotaan</h6>
+                                <p>Kami berhak membatalkan keanggotaan jika Anda melanggar syarat dan ketentuan ini atau
+                                    terlibat dalam aktivitas yang merugikan organisasi.</p>
+                                <h6>7. Perubahan Syarat</h6>
+                                <p>Kami dapat memperbarui syarat dan ketentuan ini kapan saja. Perubahan akan
+                                    diberitahukan melalui email atau situs web kami.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="{{ asset('template/back/dist/libs/select2/dist/js/select2.min.js') }}"></script>
+
+    <script>
+                                                                    const baseURL = "https://www.emsifa.com/api-wilayah-indonesia/api/";
+
+                                                                    document.addEventListener("DOMContentLoaded", function() {
+                                                                        // Load Provinsi
+                                                                        fetch(baseURL + "provinces.json")
+                                                                            .then(res => res.json())
+                                                                            .then(data => {
+                                                                                let options = '<option value="">Pilih Provinsi</option>';
+                                                                                data.forEach(province => {
+                                                                                    options +=
+                                                                                        `<option value="${province.id}" data-name="${province.name}">${province.name}</option>`;
+                                                                                });
+                                                                                document.getElementById('province').innerHTML = options;
+                                                                            });
+
+                                                                    document.getElementById('province').addEventListener('change', function() {
+                const provinceId = this.value;
+                                                                    fetch(baseURL + `regencies/${provinceId}.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                                                                        let options = '<option value="">Pilih Kota/Kabupaten</option>';
+                        data.forEach(city => {
+                                                                        options +=
+                                                                        `<option value="${city.id}" data-name="${city.name}">${city.name}</option>`;
+                        });
+                                                                    document.getElementById('city').innerHTML = options;
+                                                                    document.getElementById('district').innerHTML =
+                                                                    '<option value="">Pilih Kecamatan</option>';
+                                                                    document.getElementById('subdistrict').innerHTML =
+                                                                    '<option value="">Pilih Kelurahan</option>';
+                    });
+            });
+
+                                                                    document.getElementById('city').addEventListener('change', function() {
+                const cityId = this.value;
+                                                                    fetch(baseURL + `districts/${cityId}.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                                                                        let options = '<option value="">Pilih Kecamatan</option>';
+                        data.forEach(district => {
+                                                                        options +=
+                                                                        `<option value="${district.id}" data-name="${district.name}">${district.name}</option>`;
+                        });
+                                                                    document.getElementById('district').innerHTML = options;
+                                                                    document.getElementById('subdistrict').innerHTML =
+                                                                    '<option value="">Pilih Kelurahan</option>';
+                    });
+            });
+
+                                                                    document.getElementById('district').addEventListener('change', function() {
+                const districtId = this.value;
+                                                                    fetch(baseURL + `villages/${districtId}.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                                                                        let options = '<option value="">Pilih Kelurahan/Desa</option>';
+                        data.forEach(sub => {
+                                                                        options += `<option value="${sub.name}">${sub.name}</option>`;
+                        });
+                                                                    document.getElementById('subdistrict').innerHTML = options;
+                    });
+            });
+        });
+    </script>
+
+    <script>
+                                                                    document.addEventListener('DOMContentLoaded', function() {
+            // Get elements
+            const memberTypeSelect = document.getElementById('member_type');
+                                                                    const practiceLicenseSection = document.getElementById('practice-license-section');
+                                                                    const legalAuthorizationSection = document.getElementById('legal-authorization-section');
+                                                                    const retiredFieldsContainer = document.getElementById('retired-fields-container');
+                                                                    const fileUploadContainer = document.getElementById('file-upload-container');
+                                                                    const fileInput = document.getElementById('legal_authorization_file');
+                                                                    const letterInput = document.getElementById('retirement_decision_letter');
+                                                                    const positionInput = document.getElementById('position_tax');
+                                                                    const yearInput = document.getElementById('retirement_year');
+                                                                    const acceptTermsCheckbox = document.getElementById('accept_terms');
+                                                                    const submitButton = document.getElementById('submitButton');
+
+                                                                    // Function to toggle visibility of sections based on member_type
+                                                                    function toggleSections() {
+                const selectedValue = memberTypeSelect.value;
+                                                                    // Toggle practice license section for Utama and Kehormatan
+                                                                    practiceLicenseSection.style.display = (selectedValue === 'Utama') ? 'block' : 'none';
+                                                                    // Toggle legal authorization and retired tax officer sections for Utama and Madya
+                                                                    legalAuthorizationSection.style.display = (selectedValue === 'Utama' || selectedValue === 'Madya') ?
+                                                                    'block' : 'none';
+            }
+
+                                                                    // Function to toggle file upload container based on legal authorization radio
+                                                                    window.toggleFileUpload = function() {
+                const legalAuthorizationYes = document.getElementById('legal_authorization_yes');
+                                                                    fileUploadContainer.style.display = legalAuthorizationYes.checked ? 'block' : 'none';
+                                                                    if (legalAuthorizationYes.checked) {
+                                                                        fileInput.setAttribute('required', 'required');
+                } else {
+                                                                        fileInput.removeAttribute('required');
+                }
+            };
+
+                                                                    // Function to toggle retired fields container based on retired tax officer radio
+                                                                    window.toggleRetiredFields = function() {
+                const retiredTaxOfficerYes = document.getElementById('retired_tax_officer_yes');
+                                                                    retiredFieldsContainer.style.display = retiredTaxOfficerYes.checked ? 'block' : 'none';
+                                                                    if (retiredTaxOfficerYes.checked) {
+                                                                        letterInput.setAttribute('required', 'required');
+                                                                    positionInput.setAttribute('required', 'required');
+                                                                    yearInput.setAttribute('required', 'required');
+                } else {
+                                                                        letterInput.removeAttribute('required');
+                                                                    positionInput.removeAttribute('required');
+                                                                    yearInput.removeAttribute('required');
+                }
+            };
+
+                                                                    // Function to toggle submit button based on checkbox
+                                                                    function toggleSubmitButton() {
+                                                                        submitButton.disabled = !acceptTermsCheckbox.checked;
+            }
+
+                                                                    // Run toggle functions on page load to handle pre-selected values
+                                                                    toggleSections();
+                                                                    toggleFileUpload();
+                                                                    toggleRetiredFields();
+                                                                    toggleSubmitButton();
+
+                                                                    // Add event listeners
+                                                                    memberTypeSelect.addEventListener('change', toggleSections);
+                                                                    document.getElementById('legal_authorization_yes').addEventListener('change', toggleFileUpload);
+                                                                    document.getElementById('legal_authorization_no').addEventListener('change', toggleFileUpload);
+                                                                    document.getElementById('retired_tax_officer_yes').addEventListener('change', toggleRetiredFields);
+                                                                    document.getElementById('retired_tax_officer_no').addEventListener('change', toggleRetiredFields);
+                                                                    acceptTermsCheckbox.addEventListener('change', toggleSubmitButton);
+        });
+
+
+                                                                    function toggleFileUpload() {
+            const yesRadio = document.getElementById('legal_authorization_yes');
+                                                                    const fileUploadContainer = document.getElementById('file-upload-container');
+                                                                    const fileInput = document.getElementById('legal_authorization_file');
+
+                                                                    if (yesRadio.checked) {
+                                                                        fileUploadContainer.style.display = 'block';
+                                                                    fileInput.setAttribute('required', 'required');
+            } else {
+                                                                        fileUploadContainer.style.display = 'none';
+                                                                    fileInput.removeAttribute('required');
+            }
+        }
+
+                                                                    function toggleRetiredFields() {
+            const yesRadio = document.getElementById('retired_tax_officer_yes');
+                                                                    const retiredFieldsContainer = document.getElementById('retired-fields-container');
+                                                                    const letterInput = document.getElementById('retirement_decision_letter');
+                                                                    const positionInput = document.getElementById('position_tax');
+                                                                    const yearInput = document.getElementById('retirement_year');
+
+                                                                    if (yesRadio.checked) {
+                                                                        retiredFieldsContainer.style.display = 'block';
+                                                                    letterInput.setAttribute('required', 'required');
+                                                                    positionInput.setAttribute('required', 'required');
+                                                                    yearInput.setAttribute('required', 'required');
+            } else {
+                                                                        retiredFieldsContainer.style.display = 'none';
+                                                                    letterInput.removeAttribute('required');
+                                                                    positionInput.removeAttribute('required');
+                                                                    yearInput.removeAttribute('required');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+                                                                        toggleFileUpload();
+                                                                    toggleRetiredFields();
+        });
+    </script>
+
+    <script>
+                                                                    document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+                                                                    const submitButton = document.getElementById('submitButton');
+                                                                    const submitSpinner = document.getElementById('submitSpinner');
+
+                                                                    form.addEventListener('submit', function() {
+                                                                        // Tampilkan spinner
+                                                                        submitSpinner.classList.remove('d-none');
+
+                                                                    // Disable tombol agar tidak bisa klik lagi
+                                                                    submitButton.setAttribute('disabled', 'disabled');
+
+                // Opsional: Ubah teks tombol kalau mau
+                // submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Memproses...';
+            });
+        });
+    </script>
+
+
+
+</body>
+
+</html>
