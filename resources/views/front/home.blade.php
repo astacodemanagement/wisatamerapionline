@@ -242,7 +242,7 @@
             <div class="container text-center">
                 <a href="{{ $profil->embed_youtube }}" class="video-one__btn video-popup"><i
                         class="fa fa-play"></i></a><!-- /.video-one__btn -->
-                <p>WIMO</p>
+                <h3 style="font-size: 48px; color: yellow;">WIMO</h3>
                 <h3>PLATFORM BOOKING ONLINE TERDEPAN</h3>
             </div>
         </section>

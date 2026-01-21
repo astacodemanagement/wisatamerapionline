@@ -6,13 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $title }} </title>
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}">
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}">
     <link rel="manifest" href="assets/images/favicons/site.webmanifest">
 
 
-    <link href="https://fonts.googleapis.com/css?family=Barlow+Condensed:200,300,400,400i,500,600,700,800,900%7CSatisfy&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Barlow+Condensed:200,300,400,400i,500,600,700,800,900%7CSatisfy&display=swap"
+        rel="stylesheet">
 
 
     <link rel="stylesheet" href="{{ asset('template/front/assets/css/animate.min.css') }}">
@@ -40,21 +45,91 @@
     @stack('styles')
     <style>
         /* Google Translate Styles (adopted from stasolar) */
-        .google-translate-desktop { display: inline-block !important; }
-        .google-translate-mobile { display: none !important; }
-        @media screen and (max-width: 991px) {
-            .google-translate-desktop { display: none !important; }
-            .google-translate-mobile { display: block !important; margin: 15px; text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .google-translate-desktop {
+            display: inline-block !important;
         }
-        .goog-te-gadget { font-family: inherit !important; }
-        .goog-te-gadget-simple { background-color: transparent !important; border: 1px solid #ddd !important; padding: 5px 10px !important; border-radius: 5px !important; font-size: 14px !important; }
-        .goog-te-gadget-simple:hover { background-color: #f8f9fa !important; }
-        .goog-te-gadget img, .goog-te-gadget-icon { display: none !important; }
-        .goog-te-banner-frame.skiptranslate { display: none !important; }
-        body { top: 0px !important; }
-        .custom-translate-dropdown select { padding: 6px 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; background-color: white; font-family: inherit; cursor: pointer; width: auto; min-width: 140px; }
-        .custom-translate-dropdown select:focus { outline: none; border-color: #25D366; }
-        @media screen and (max-width: 991px) { .custom-translate-dropdown { display: block !important; text-align: center; margin: 15px 0; padding: 10px; border-radius: 5px; } .custom-translate-dropdown select { width: 100%; font-size: 14px; padding: 8px 12px; min-width: auto; } }
+
+        .google-translate-mobile {
+            display: none !important;
+        }
+
+        @media screen and (max-width: 991px) {
+            .google-translate-desktop {
+                display: none !important;
+            }
+
+            .google-translate-mobile {
+                display: block !important;
+                margin: 15px;
+                text-align: center;
+                padding: 10px;
+                background: #f8f9fa;
+                border-radius: 5px;
+            }
+        }
+
+        .goog-te-gadget {
+            font-family: inherit !important;
+        }
+
+        .goog-te-gadget-simple {
+            background-color: transparent !important;
+            border: 1px solid #ddd !important;
+            padding: 5px 10px !important;
+            border-radius: 5px !important;
+            font-size: 14px !important;
+        }
+
+        .goog-te-gadget-simple:hover {
+            background-color: #f8f9fa !important;
+        }
+
+        .goog-te-gadget img,
+        .goog-te-gadget-icon {
+            display: none !important;
+        }
+
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+
+        body {
+            top: 0px !important;
+        }
+
+        .custom-translate-dropdown select {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: white;
+            font-family: inherit;
+            cursor: pointer;
+            width: auto;
+            min-width: 140px;
+        }
+
+        .custom-translate-dropdown select:focus {
+            outline: none;
+            border-color: #25D366;
+        }
+
+        @media screen and (max-width: 991px) {
+            .custom-translate-dropdown {
+                display: block !important;
+                text-align: center;
+                margin: 15px 0;
+                padding: 10px;
+                border-radius: 5px;
+            }
+
+            .custom-translate-dropdown select {
+                width: 100%;
+                font-size: 14px;
+                padding: 8px 12px;
+                min-width: auto;
+            }
+        }
     </style>
     <style>
         .whatsapp-button {
@@ -142,7 +217,8 @@
 
 <body>
     <div class="preloader">
-        <img src="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}" class="preloader__image" alt="">
+        <img src="{{ asset('/upload/profil/' . ($profil->favicon ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}"
+            class="preloader__image" alt="">
     </div>
 
     <div class="page-wrapper">
@@ -177,8 +253,8 @@
 
                     <div class="main-nav__logo-box">
                         <a href="/" class="main-nav__logo">
-                            <img src="{{ asset('/upload/profil/' . ($profil->logo ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}" class="main-logo"
-                                width="150" alt="Awesome Image" />
+                            <img src="{{ asset('/upload/profil/' . ($profil->logo ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}"
+                                class="main-logo" width="150" alt="Awesome Image" />
                         </a>
                         <a href="#" class="side-menu__toggler"><i class="fa fa-bars"></i>
                         </a>
@@ -192,7 +268,7 @@
                             <li class="dropdown {{ request()->is('about') ? 'current' : '' }}">
                                 <a href="/about">Tentang Wimo</a>
                             </li>
-                             <li class="dropdown {{ request()->is('tour') ? 'current' : '' }}">
+                            <li class="dropdown {{ request()->is('tour') ? 'current' : '' }}">
                                 <a href="/tour">Paket Jeep</a>
                             </li>
                             <li class="dropdown {{ request()->is('gallery') ? 'current' : '' }}">
@@ -224,8 +300,8 @@
                             </li> --}}
                         </ul>
                     </div>
-                   
-                     <div class="main-nav__right">
+
+                    <div class="main-nav__right">
                         <div class="custom-translate-dropdown google-translate-desktop">
                             <select id="language-select-desktop" onchange="changeLanguage(this.value)">
                                 <option value="id">🇮🇩 Indonesia</option>
@@ -260,10 +336,10 @@
             <div class="row">
                 <div class="footer-widget__column footer-widget__about">
                     <a href="index.html" class="footer-widget__logo"><img
-                            src="{{ asset('/upload/profil/' . ($profil->logo ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}" width="123"
-                            alt=""></a>
+                            src="{{ asset('/upload/profil/' . ($profil->logo ?: 'https://static1.squarespace.com/static/524883b7e4b03fcb7c64e24c/524bba63e4b0bf732ffc8bce/646fb10bc178c30b7c6a31f2/1712669811602/Squarespace+Favicon.jpg?format=1500w')) }}"
+                            width="123" alt=""></a>
                     <p>{!! $profil->deskripsi_2 !!}</p>
-                    
+
                 </div>
                 <div class="footer-widget__column footer-widget__links">
                     <h3 class="footer-widget__title">Perusahaan</h3>
@@ -271,7 +347,7 @@
                         <li><a href="/about">Tentang Kami</a></li>
                         <li><a href="/tour">Paket Jeep</a></li>
                         <li><a href="/destination">Destinasi</a></li>
-             
+
                     </ul>
                 </div>
                 <div class="footer-widget__column footer-widget__links">
@@ -284,7 +360,7 @@
                     </ul>
                 </div>
                 <div class="footer-widget__column footer-widget__gallery">
-                    <h3 class="footer-widget__title">Instagram</h3>
+                    {{-- <h3 class="footer-widget__title">Instagram</h3> --}}
                     {{-- <ul class="footer-widget__gallery-list list-unstyled">
                         <li><a href="#">
                                 <img src="{{ asset('template/front/assets/images/tour/tour1.jpg') }}" alt="">
@@ -306,7 +382,10 @@
                             </a></li>
                     </ul> --}}
                     <!-- SnapWidget -->
-<iframe src="https://snapwidget.com/embed/1115174" class="snapwidget-widget" allowtransparency="true" frameborder="0" scrolling="no" style="border:none; overflow:hidden;  width:315px; height:210px" title="Posts from Instagram"></iframe>
+                    {{-- <iframe src="https://snapwidget.com/embed/1115174" class="snapwidget-widget"
+                        allowtransparency="true" frameborder="0" scrolling="no"
+                        style="border:none; overflow:hidden;  width:315px; height:210px"
+                        title="Posts from Instagram"></iframe> --}}
                 </div>
             </div>
         </div>
@@ -326,7 +405,7 @@
     </div>
 
 
-    {{-- <a href="#" data-target="html" class="scroll-to-target scroll-to-top"><i class="fa fa-angle-up"></i></a>
+    <a href="#" data-target="html" class="scroll-to-target scroll-to-top"><i class="fa fa-angle-up"></i></a>
 
 
     <div class="side-menu__block">
@@ -339,8 +418,7 @@
         <div class="side-menu__block-inner ">
             <div class="side-menu__top justify-content-end">
 
-                <a href="#" class="side-menu__toggler side-menu__close-btn"><img
-                        src="{{ asset('template/front/assets/images/tour/tour1.jpg') }}" alt=""></a>
+                <a href="#" class="side-menu__toggler side-menu__close-btn"><i class="fa fa-times"></i></a>
             </div>
 
 
@@ -349,19 +427,19 @@
             </nav>
             <div class="side-menu__sep"></div>
             <div class="side-menu__content">
-                <p>Tripo is a premium wordpress theme for travel, tours, trips, adventures and a wide range of other
-                    tour agencies.</p>
-                <p><a href="mailto:needhelp@tripo.com">needhelp@tripo.com</a> <br> <a href="tel:888-999-0000">888 999
-                        0000</a></p>
+                <p>{{ $profil->nama_profil }} - PLATFORM BOOKING ONLINE TERDEPAN</p>
+                <p><a href="mailto:{{ $profil->email }}">{{ $profil->email }}</a> <br> <a
+                        href="tel:{{ $profil->no_telp }}">{{ $profil->no_telp }}</a></p>
                 <div class="side-menu__social">
-                    <a href="#"><i class="fab fa-facebook-square"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="{{ $profil->youtube }}"><i class="fab fa-youtube"></i></a>
+                    <a href="{{ $profil->instagram }}"><i class="fab fa-instagram"></i></a>
+                      <a href="{{ $profil->tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/tiktok.svg" alt="TikTok"
+                        style="width:18px;height:18px;" />
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 
 
 
@@ -380,9 +458,10 @@
 
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/{{ $profil->no_wa }}?text={{ urlencode($profil->deskripsi_3) }}"
-       class="whatsapp-button" title="Hubungi Kami via WhatsApp">
-        <img src="https://cdn-icons-png.freepik.com/256/3983/3983877.png?semt=ais_white_label" style="border-radius: 30%" alt="WhatsApp">
+    <a href="https://wa.me/{{ $profil->no_wa }}?text={{ urlencode($profil->deskripsi_3) }}" class="whatsapp-button"
+        title="Hubungi Kami via WhatsApp">
+        <img src="https://cdn-icons-png.freepik.com/256/3983/3983877.png?semt=ais_white_label"
+            style="border-radius: 30%" alt="WhatsApp">
         <span>Chat via WhatsApp</span>
     </a>
 
@@ -418,6 +497,7 @@
                 autoDisplay: false
             }, 'google_translate_element');
         }
+
         function changeLanguage(lang) {
             let attempts = 0;
             const maxAttempts = 50;
@@ -427,10 +507,14 @@
                     clearInterval(interval);
                     if (select.value !== lang) {
                         select.value = lang;
-                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                        select.dispatchEvent(new Event('change', {
+                            bubbles: true
+                        }));
                     }
                     document.getElementById('language-select-desktop')?.setAttribute('value', lang);
-                    document.querySelectorAll('.custom-translate-dropdown select').forEach(el => { el.value = lang; });
+                    document.querySelectorAll('.custom-translate-dropdown select').forEach(el => {
+                        el.value = lang;
+                    });
                 } else if (++attempts >= maxAttempts) {
                     clearInterval(interval);
                     console.warn('Google Translate widget not loaded.');
