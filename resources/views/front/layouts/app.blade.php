@@ -329,7 +329,7 @@
 
     <footer class="site-footer">
         <div class="site-footer__bg"
-            style="background-image: url({{ $profil->banner ? asset('upload/profil/' . $profil->banner) : 'https://jalankebromo.com/wp-content/uploads/2023/06/7.png' }});">
+            style="background-image: url('{{ $profil->banner ? asset('upload/profil/' . $profil->banner) : 'https://jalankebromo.com/wp-content/uploads/2023/06/7.png' }}');">
         </div>
 
         <div class="container">
@@ -400,6 +400,7 @@
                 <a href="{{ $profil->tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">
                     <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/tiktok.svg" alt="TikTok"
                         style="width:18px;height:18px;" />
+                </a>
             </div>
         </div>
     </div>
@@ -433,9 +434,10 @@
                 <div class="side-menu__social">
                     <a href="{{ $profil->youtube }}"><i class="fab fa-youtube"></i></a>
                     <a href="{{ $profil->instagram }}"><i class="fab fa-instagram"></i></a>
-                      <a href="{{ $profil->tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">
-                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/tiktok.svg" alt="TikTok"
-                        style="width:18px;height:18px;" />
+                    <a href="{{ $profil->tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/tiktok.svg" alt="TikTok"
+                            style="width:18px;height:18px;" />
+                    </a>
                 </div>
             </div>
         </div>
